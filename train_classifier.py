@@ -24,13 +24,13 @@ parser.add_argument('--verbose', help='logging', type=int, default=1)
 def train_model(x_train, x_val, y_train, y_val, model_params_, train_params_):
     """
 
-    :param x_train:
-    :param x_val:
-    :param y_train:
-    :param y_val:
-    :param model_params_:
-    :param train_params_:
-    :return:
+    :param x_train: train data
+    :param x_val: val data
+    :param y_train: train labels
+    :param y_val: val labels
+    :param model_params_: dict of parameters for lgbm
+    :param train_params_: num_boost_rounds and early stopping rounds
+    :return: trained Booster model
     """
     lgb_train = lgb.Dataset(x_train, y_train)
     lgb_eval = lgb.Dataset(x_val, y_val, reference=lgb_train)
@@ -46,9 +46,9 @@ def train_model(x_train, x_val, y_train, y_val, model_params_, train_params_):
 def save_model(model_, path):
     """
 
-    :param model_:
-    :param path:
-    :return:
+    :param model_: trained model
+    :param path: path for saving model
+    :return: None
     """
     model_.save_model(path)
 

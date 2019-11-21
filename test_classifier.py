@@ -16,9 +16,9 @@ parser.add_argument('--num-features-importance', help='Number of max features fo
 def predict_(model_, x_test):
     """
 
-    :param model_:
-    :param x_test:
-    :return:
+    :param model_: trained lgbm model
+    :param x_test: test data
+    :return: list of predictions for sample of feature
     """
     predictions_ = []
     predict = model_.predict(x_test)
@@ -29,9 +29,9 @@ def predict_(model_, x_test):
 def test_results(y_test, predictions_):
     """
 
-    :param y_test:
-    :param predictions_:
-    :return:
+    :param y_test: true labels
+    :param predictions_: predicted labels
+    :return: None
     """
     print(f'\nAccuracy : {accuracy_score(y_test, predictions) * 100.:2f}%\n')
     print(f'traffic_analysis report : {classification_report(y_test, predictions)}')
@@ -40,9 +40,9 @@ def test_results(y_test, predictions_):
 def plot_confusion_matrix(y_test, predictions_):
     """
 
-    :param y_test:
-    :param predictions_:
-    :return:
+    :param y_test: true labels
+    :param predictions_: predicted labels
+    :return: None
     """
     cm = confusion_matrix(y_test, predictions_)
     fig, ax = plt.subplots()
@@ -68,9 +68,9 @@ def plot_confusion_matrix(y_test, predictions_):
 def plot_feature_importance(model_, num_features):
     """
 
-    :param model_:
-    :param num_features:
-    :return:
+    :param model_: trained lgbm model
+    :param num_features: Max number of features to plot
+    :return: None
     """
     fig, ax = plt.subplots(figsize=(15, 15))
     lgb.plot_importance(model_, ax=ax, max_num_features=num_features)

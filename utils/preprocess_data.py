@@ -2,11 +2,11 @@ import pandas as pd
 import sklearn.utils as util
 from sklearn.model_selection import train_test_split
 
-
+#TODO: перенести в модуль датасетов в виде класса
 def load():
     """
 
-    :return:
+    :return: None
     """
     print('Start data extraction')
     benign = pd.read_csv('../../data/benign/benign_traffic.csv')
@@ -36,8 +36,8 @@ def load():
 def split_data(traffic_):
     """
 
-    :param traffic_:
-    :return:
+    :param traffic_: DataFrame which contains traffic features
+    :return: None
     """
     target = traffic_['class']
     traffic_ = traffic_.drop(['class'], axis=1)
@@ -54,13 +54,13 @@ def split_data(traffic_):
 def write_to_csv(X_train, X_val, X_test, y_train, y_val, y_test):
     """
 
-    :param X_train:
-    :param X_val:
-    :param X_test:
-    :param y_train:
-    :param y_val:
-    :param y_test:
-    :return:
+    :param X_train: train dataset
+    :param X_val: val dataset
+    :param X_test: test dataset
+    :param y_train: train labels
+    :param y_val: val labels
+    :param y_test: test labels
+    :return: None
     """
     X_train = pd.concat([X_train, pd.DataFrame(y_train, columns=['class'])], axis=1)
     X_val = pd.concat([X_val, pd.DataFrame(y_val, columns=['class'])], axis=1)
