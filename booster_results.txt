@@ -1,0 +1,15 @@
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Danmini_Doorbell,0.99887
+Ecobee_Thermostat,0.99896
+Ennio_Doorbell,0.99907
+Philips_B120N10_Baby_Monitor,0.99937
+Provision_PT_737E_Security_Camera,0.99988
+Provision_PT_838_Security_Camera,0.99867
+Samsung_SNH_1011_N_Webcam,0.99949
+SimpleHome_XCS7_1002_WHT_Security_Camera,0.99962
+SimpleHome_XCS7_1003_WHT_Security_Camera,0.99777

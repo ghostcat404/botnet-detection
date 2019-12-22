@@ -1,39 +1,77 @@
+import os
+import json
+import argparse
 import pandas as pd
 import sklearn.utils as util
+from termcolor import colored
 from sklearn.model_selection import train_test_split
 
-#TODO: перенести в модуль датасетов в виде класса
-def load():
+# Парсинг аргументов из командной строки
+parser = argparse.ArgumentParser(description='Classificator arguments')
+parser.add_argument('--dir-path', help='Path to dir with traffic', default='data/Danmini_Doorbell')
+
+
+# Загрузка данных, присвоение меток
+def load(dir_path):
     """
 
     :return: None
     """
+    attacks = {}
     print('Start data extraction')
-    benign = pd.read_csv('../../data/benign/benign_traffic.csv')
+    benign = pd.read_csv(dir_path + 'benign_traffic.csv')
     benign['class'] = 0
-    g_combo = pd.read_csv('../../data/gafgyt_attacks/combo.csv')
+    attacks[0] = 'benign'
+    g_combo = pd.read_csv(dir_path + 'gafgyt_attacks/combo.csv')
     g_combo['class'] = 1
-    g_junk = pd.read_csv('../../data/gafgyt_attacks/junk.csv')
+    attacks[1] = 'bashlite_combo'
+    g_junk = pd.read_csv(dir_path + 'gafgyt_attacks/junk.csv')
     g_junk['class'] = 2
-    g_scan = pd.read_csv('../../data/gafgyt_attacks/scan.csv')
+    attacks[2] = 'bashlite_junk'
+    g_scan = pd.read_csv(dir_path + 'gafgyt_attacks/scan.csv')
     g_scan['class'] = 3
-    g_tcp = pd.read_csv('../../data/gafgyt_attacks/tcp.csv')
+    attacks[3] = 'bashlite_scan'
+    g_tcp = pd.read_csv(dir_path + 'gafgyt_attacks/tcp.csv')
     g_tcp['class'] = 4
-    g_udp = pd.read_csv('../../data/gafgyt_attacks/udp.csv')
+    attacks[4] = 'bashlite_tcp'
+    g_udp = pd.read_csv(dir_path + 'gafgyt_attacks/udp.csv')
     g_udp['class'] = 5
-    print("Data extraction : Success\n")
+    attacks[5] = 'bashlite_udp'
+    if os.path.exists(dir_path + 'mirai_attacks/'):
+        m_ack = pd.read_csv(dir_path + 'mirai_attacks/ack.csv')
+        m_ack['class'] = 6
+        attacks[6] = 'mirai_ack'
+        m_scan = pd.read_csv(dir_path + 'mirai_attacks/scan.csv')
+        m_scan['class'] = 7
+        attacks[7] = 'mirai_scan'
+        m_syn = pd.read_csv(dir_path + 'mirai_attacks/syn.csv')
+        m_syn['class'] = 8
+        attacks[8] = 'mirai_syn'
+        m_udp = pd.read_csv(dir_path + 'mirai_attacks/udp.csv')
+        m_udp['class'] = 9
+        attacks[9] = 'mirai_udp'
+        m_udpplain = pd.read_csv(dir_path + 'mirai_attacks/udpplain.csv')
+        m_udpplain['class'] = 10
+        attacks[10] = 'mirai_udpplain'
+        print(colored("Success\n", 'green'))
+        malicious = pd.concat([g_combo, g_junk, g_scan, g_tcp, g_udp, m_ack, m_scan, m_syn, m_udp, m_udpplain])
+    else:
+        print(colored("Success\n", 'green'))
+        malicious = pd.concat([g_combo, g_junk, g_scan, g_tcp, g_udp])
+    with open(dir_path + 'data_split/attacks_lable.json', 'w') as outfile:
+        json.dump(attacks, outfile)
 
     print('Start data preprocessing')
-    malicious = pd.concat([g_combo, g_junk, g_scan, g_tcp, g_udp])
     benign = util.shuffle(benign)
     malicious = util.shuffle(malicious)
     traffic_ = pd.concat([benign, malicious])
     traffic_ = util.shuffle(traffic_)
-    print('Data preprocessing : Success\n')
+    print(colored('Success\n', 'green'))
 
-    split_data(traffic_)
+    split_data(traffic_, dir_path)
 
-def split_data(traffic_):
+# Разбиаение данных дла обучающую, валидационную и тестовую выборки
+def split_data(traffic_, dir_path):
     """
 
     :param traffic_: DataFrame which contains traffic features
@@ -49,9 +87,10 @@ def split_data(traffic_):
                                                       target_train,
                                                       test_size=0.2,
                                                       random_state=1011)
-    write_to_csv(X_train, X_val, traffic_test, y_train, y_val, target_test)
+    write_to_csv(X_train, X_val, traffic_test, y_train, y_val, target_test, dir_path)
 
-def write_to_csv(X_train, X_val, X_test, y_train, y_val, y_test):
+# Сохранение выборок
+def write_to_csv(X_train, X_val, X_test, y_train, y_val, y_test, dir_path):
     """
 
     :param X_train: train dataset
@@ -66,10 +105,13 @@ def write_to_csv(X_train, X_val, X_test, y_train, y_val, y_test):
     X_val = pd.concat([X_val, pd.DataFrame(y_val, columns=['class'])], axis=1)
     X_test = pd.concat([X_test, pd.DataFrame(y_test, columns=['class'])], axis=1)
     print('Write Data')
-    X_train.to_csv("../../data_split/train.csv", index=False)
-    X_val.to_csv("../../data_split/val.csv", index=False)
-    X_test.to_csv("../../data_split/test.csv", index=False)
-    print('Write Data : Success')
+    X_train.to_csv(dir_path + "data_split/train.csv", index=False)
+    X_val.to_csv(dir_path + "data_split/val.csv", index=False)
+    X_test.to_csv(dir_path + "data_split/test.csv", index=False)
+    print(colored('Success', 'green'))
+
 
 if __name__ == '__main__':
-    load()
+    args = parser.parse_args()
+    path_to_dir = args.dir_path if args.dir_path[-1] == '/' else args.dir_path + '/'
+    load(path_to_dir)

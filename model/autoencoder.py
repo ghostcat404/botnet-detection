@@ -1,5 +1,5 @@
 from keras.layers import Input, Dense
-from keras.models import Model
+from keras.models import Model, load_model
 
 
 class Autoencoder:
@@ -12,15 +12,15 @@ class Autoencoder:
         encoded = Dense(10, activation='relu')(encoded)
 
         # "decoded" is the lossy reconstruction of the input
-        decoded = Dense(10, activation='relu')(encoded)
+        decoded = Dense(5, activation='relu')(encoded)
+        decoded = Dense(10, activation='relu')(decoded)
         decoded = Dense(16, activation='relu')(decoded)
-        decoded = Dense(32, activation='relu')(decoded)
         decoded = Dense(64, activation='relu')(decoded)
         decoded = Dense(115, activation='sigmoid')(decoded)
 
         # this model maps an input to its reconstruction
         self.model = Model(input_img, decoded)
-        self.model.compile(optimizer='adadelta', loss='mean_squared_error')
+        self.model.compile(optimizer='adam', loss='mean_squared_error')
         print('Model was compile')
 
     def train_model(self, X_train, X_test):
@@ -36,4 +36,8 @@ class Autoencoder:
                        shuffle=True,
                        validation_data=(X_test, X_test))
 
-        return self.model
+    def predict(self, X):
+        return self.model.predict(X)
+
+    def load_model(self, path_to_model):
+        self.model = load_model(path_to_model)

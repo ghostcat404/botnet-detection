@@ -1,12 +1,20 @@
 import warnings
+
 warnings.filterwarnings('ignore')
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from sklearn.preprocessing import normalize
 
+
 class Data_csv:
     def __init__(self):
+        self.Xval = 0
+        self.yval = 0
+        self.X_test = 0
+        self.X_train = 0
+        self.Xtest = 0
+        self.ytest = 0
         self.preprocess_data()
 
     def preprocess_data(self):
@@ -60,12 +68,12 @@ class Data_csv:
         y = benignTrain['class']
         X = normalize(X)
 
-        Xval = dataVal[l]
-        self.yval = dataVal['class']
-        self.Xval = normalize(Xval)
+        self.Xval = dataVal[l]
+        self.yval = dataVal['class'].values
+        self.Xval = normalize(self.Xval)
 
-        XTest = dataTest[l]
-        self.yTest = dataTest['class']
-        self.XTest = normalize(XTest)
+        self.XTest = dataTest[l]
+        self.yTest = dataTest['class'].values
+        self.XTest = normalize(self.XTest)
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.3)
